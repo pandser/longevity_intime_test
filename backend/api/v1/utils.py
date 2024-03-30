@@ -1,11 +1,11 @@
 import string
 
 from django.conf import settings
-from django.core.mail import send_mail
 from django.shortcuts import get_object_or_404
 from django.utils.crypto import get_random_string
 
 from users.models import User
+from api.v1.tasks import send_email
 
 
 def get_otp():
@@ -21,9 +21,9 @@ def send_otp(request):
     )
     user.otp = get_otp()
     user.save()
-    send_mail(
-        'OTP',
-        f'Код подтверждения {user.otp}',
-        'token@example.com',
-        [request.data.get('email')],
+    send_email.delay(
+        theme='OTP',
+        body=f'Код подтверждения {user.otp}',
+        sender='token@example.com',
+        recipient=[request.data.get('email')],
     )

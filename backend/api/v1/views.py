@@ -1,9 +1,6 @@
-from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.hashers import make_password
 from rest_framework import status, viewsets
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -11,6 +8,7 @@ from api.v1.permissions import IsMeOrAdminPermission
 from api.v1.serializers import SignupSerializer, UserSerializer, GetTokenObtainPairSerializer
 from api.v1.utils import send_otp
 from users.models import User
+
 
 
 class SignupView(APIView):
