@@ -15,4 +15,4 @@ class User(AbstractUser):
         blank=True,
     )
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ('usernsme',)
+    REQUIRED_FIELDS = ('username',)
