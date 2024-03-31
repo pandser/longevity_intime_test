@@ -12,17 +12,17 @@ from users.models import User
 
 
 class SignupView(APIView):
-    """Вью для регистрации пользователей."""
-
     permission_classes = (AllowAny,)
 
     def post(self, request):
-        """Метод POST."""
         serializer = SignupSerializer(data=request.data)
         if User.objects.filter(username=request.data.get('username'),
                                email=request.data.get('email')).exists():
             send_otp(request)
-            return Response({'message': 'пароль отравлен на почту'}, status=status.HTTP_200_OK)
+            return Response(
+                {'message': 'пароль отравлен на почту'},
+                status=status.HTTP_200_OK
+            )
         serializer.is_valid(raise_exception=True)
         serializer.save()
         send_otp(request)
@@ -30,8 +30,6 @@ class SignupView(APIView):
 
 
 class GetTokenObtainPairView(TokenObtainPairView):
-    """Вью для получения токена"""
-
     serializer_class = GetTokenObtainPairSerializer
 
 

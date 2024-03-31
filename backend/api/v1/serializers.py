@@ -9,8 +9,6 @@ from users.models import User
 
 
 class SignupSerializer(serializers.ModelSerializer):
-    """Сериализатор для регистрации пользователей."""
-
     def create(self, validated_data):
         return User.objects.create(
             email=validated_data.get('email'),
@@ -32,8 +30,6 @@ class SignupSerializer(serializers.ModelSerializer):
 
 
 class GetTokenObtainPairSerializer(serializers.Serializer):
-    """Сериализатор получения токена."""
-
     email = serializers.EmailField(max_length=254)
     otp = serializers.CharField(max_length=settings.OTP_LENGTH)
 

@@ -2,8 +2,6 @@ from rest_framework import permissions
 
 
 class IsMeOrAdminPermission(permissions.BasePermission):
-    """Даёт доступ только к GET/OPTIONS/HEAD."""
-
     message = 'Данный запрос недоступен для вас.'
 
     def has_object_permission(self, request, view, obj):

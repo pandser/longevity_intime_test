@@ -9,12 +9,10 @@ from api.v1.tasks import send_email
 
 
 def get_otp():
-    """Генерирует opt."""
     return get_random_string(settings.OTP_LENGTH, string.digits)
 
 
 def send_otp(request):
-    """Отправляет сгенерированный opt пользователю."""
     user = get_object_or_404(
         User,
         email=request.data.get('email'),
