@@ -5,7 +5,8 @@ from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
 from api.v1.permissions import IsMeOrAdminPermission
-from api.v1.serializers import SignupSerializer, UserSerializer, GetTokenObtainPairSerializer
+from api.v1.serializers import (SignupSerializer, UserSerializer,
+                                GetTokenObtainPairSerializer)
 from api.v1.utils import send_otp
 from users.models import User
 

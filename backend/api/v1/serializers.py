@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
+from django.core.cache import cache
 from django.shortcuts import get_object_or_404
 from rest_framework import serializers
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
@@ -19,8 +20,14 @@ class SignupSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         instance.email = validated_data.get('eamil', instance.email)
         instance.username = validated_data.get('username', instance.username)
-        instance.first_name = validated_data.get('first_name', instance.first_name)
-        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.first_name = validated_data.get(
+            'first_name',
+            instance.first_name
+        )
+        instance.last_name = validated_data.get(
+            'last_name',
+            instance.last_name
+        )
         return instance
     
     class Meta:
@@ -34,11 +41,11 @@ class GetTokenObtainPairSerializer(serializers.Serializer):
     otp = serializers.CharField(max_length=settings.OTP_LENGTH)
 
     def validate(self, data):
-        user = get_object_or_404(User, email=data.get('email'))
-        if user.otp != data.get('otp'):
+        email = data.get('email')
+        user = get_object_or_404(User, email=email)
+        if cache.get(email) != data.get('otp'):
             raise serializers.ValidationError('Не верный otp')
-        user.otp = ''
-        user.save()
+        cache.delete(email)
         return {
             'access': str(AccessToken.for_user(user)),
             'refresh': str(RefreshToken.for_user(user)),

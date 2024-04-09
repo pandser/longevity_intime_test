@@ -1,7 +1,7 @@
 import string
 
 from django.conf import settings
-from django.shortcuts import get_object_or_404
+from django.core.cache import cache
 from django.utils.crypto import get_random_string
 
 from users.models import User
@@ -13,15 +13,11 @@ def get_otp():
 
 
 def send_otp(request):
-    user = get_object_or_404(
-        User,
-        email=request.data.get('email'),
-    )
-    user.otp = get_otp()
-    user.save()
+    email = request.data.get('email')
+    cache.set(email, get_otp())
     send_email.delay(
         theme='OTP',
-        body=f'Код подтверждения {user.otp}',
+        body=f'Код подтверждения {cache.get(email)}',
         sender='token@example.com',
-        recipient=[request.data.get('email')],
+        recipient=[email],
     )
