@@ -1,6 +1,8 @@
 from rest_framework import status, viewsets
+from rest_framework.authentication import BasicAuthentication
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.views import APIView
-from rest_framework.permissions import AllowAny
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 
@@ -17,17 +19,25 @@ class SignupView(APIView):
 
     def post(self, request):
         serializer = SignupSerializer(data=request.data)
-        if User.objects.filter(username=request.data.get('username'),
-                               email=request.data.get('email')).exists():
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        send_otp(request)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class LoginView(APIView):
+    authentication_classes = [BasicAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        try:
             send_otp(request)
             return Response(
                 {'message': 'пароль отравлен на почту'},
                 status=status.HTTP_200_OK
             )
-        serializer.is_valid(raise_exception=True)
-        serializer.save()
-        send_otp(request)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        except AuthenticationFailed as error:
+            return error
 
 
 class GetTokenObtainPairView(TokenObtainPairView):

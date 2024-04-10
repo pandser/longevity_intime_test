@@ -16,19 +16,7 @@ class SignupSerializer(serializers.ModelSerializer):
             username=validated_data.get('username'),
             password = make_password(validated_data.get('password'))
         )
-    
-    def update(self, instance, validated_data):
-        instance.email = validated_data.get('eamil', instance.email)
-        instance.username = validated_data.get('username', instance.username)
-        instance.first_name = validated_data.get(
-            'first_name',
-            instance.first_name
-        )
-        instance.last_name = validated_data.get(
-            'last_name',
-            instance.last_name
-        )
-        return instance
+
     
     class Meta:
         model = User
